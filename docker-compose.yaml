@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  # jaeger:
+  #   image: jaegertracing/all-in-one:1.13.1
+  #   ports:
+  #     - "16686:16686"
+  #   restart: on-failure
+  service-a:
+    build: ./service-a
+    links:
+      # - jaeger
+      - service-b
+    depends_on:
+      # - jaeger
+      - service-b
+    ports:
+      - "8080:8080"
+    environment:
+      # JAEGER_AGENT_HOST: "10.0.67.220"
+      # JAEGER_AGENT_PORT: "6831"
+      JAEGER_ENDPOINT: http://10.0.67.220:14268/api/traces
+      SERVICE_FORMATTER: service-b
+  service-b:
+    build: ./service-b
+    # links:
+      # - jaeger
+    # depends_on:
+      # - jaeger
+    ports:
+      - "8081:8081"
+    environment:
+      # JAEGER_AGENT_HOST: "10.0.67.220"
+      # JAEGER_AGENT_PORT: "6831"
+      JAEGER_ENDPOINT: http://10.0.67.220:14268/api/traces
